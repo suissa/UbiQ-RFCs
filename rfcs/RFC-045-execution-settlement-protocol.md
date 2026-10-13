@@ -4,7 +4,7 @@
 - Category: Standards Track
 - Scope: execution
 - Created: 2026-10-13
-- Requires: RFC-002, RFC-004, RFC-009, RFC-010, RFC-017, RFC-026, RFC-028, RFC-041, RFC-046, RFC-048
+- Requires: RFC-002, RFC-004, RFC-009, RFC-010, RFC-017, RFC-026, RFC-028, RFC-041, RFC-046
 - Updates: RFC-004, RFC-009, RFC-010, RFC-017, RFC-028, RFC-041
 - Obsoletes: —
 - Threats addressed: A3, A4, A5
