@@ -4,7 +4,7 @@
 - Category: Standards Track
 - Scope: trust, execution, transport
 - Created: 2026-10-13
-- Requires: RFC-000, RFC-002, RFC-019, RFC-022, RFC-045
+- Requires: RFC-000
 - Updates: —
 - Obsoletes: —
 - Threats addressed: A1, A2, A3, A4, A5
