@@ -1,0 +1,30 @@
+id: UESP-CRASH-03
+profile: Durable
+rfc: RFC-045
+version: draft-v1
+description: A crash after an external effect but before durable settlement must reconcile, not blindly repeat.
+steps:
+  - do: persist_intent
+    attempt_id: a1
+  - do: invoke_effect
+    attempt_id: a1
+    provider: mock-idempotent
+  - do: crash
+    boundary: after_effect_before_settlement
+  - do: restart
+  - do: reconcile
+    attempt_id: a1
+expect:
+  state: settled-success
+  provider_effect_count: 1
+  settlement_count: 1
+forbidden:
+  - blind_retry
+  - acknowledge_before_settlement
+fault_boundaries:
+  - pre-intent
+  - post-intent
+  - post-effect
+  - post-settlement
+  - pre-ack
+  - post-ack
