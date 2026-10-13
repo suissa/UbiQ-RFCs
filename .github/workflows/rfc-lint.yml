@@ -38,3 +38,5 @@ jobs:
         run: python3 .github/scripts/lint_rfc.py
       - name: Run conformance vector tests
         run: python3 .github/scripts/test_conformance.py
+      - name: Run UESP E3 recovery vector test
+        run: python3 .github/scripts/test_uesp_e3.py
