@@ -1,0 +1,60 @@
+{
+  "id": "SERIALIZATION-JCS-001",
+  "rfc": "RFC-047",
+  "profile": "Core",
+  "version": "draft-v1",
+  "purpose": "JCS projection examples; does not replace the RFC's deterministic-CBOR profile for signed or hashed protocol objects.",
+  "jcs_cases": [
+    {
+      "name": "object-key-order",
+      "input": {
+        "b": 2,
+        "a": 1
+      },
+      "canonical_utf8": "{\"a\":1,\"b\":2}",
+      "sha256": "43258cff783fe7036d8a43033f830adfc60ec037382473548ac742b888292777"
+    }
+  ],
+  "semantic_addresses": [
+    {
+      "value": "Patient.create.requested",
+      "valid": true
+    },
+    {
+      "value": "Appointment.cancelled",
+      "valid": false
+    },
+    {
+      "value": "Appointment.cancel.requested",
+      "valid": true
+    },
+    {
+      "value": "Patient.create.x-review-needed",
+      "valid": true
+    },
+    {
+      "value": "Patient.*.requested",
+      "valid": false
+    },
+    {
+      "value": "patient.create.requested",
+      "valid": false
+    },
+    {
+      "value": "Patient.create/ requested",
+      "valid": false
+    }
+  ],
+  "transport_cases": [
+    {
+      "canonical": "Patient.create.requested",
+      "nats": "Patient.create.requested",
+      "mqtt": "Patient/create/requested"
+    },
+    {
+      "canonical": "Appointment.cancel.requested",
+      "nats": "Appointment.cancel.requested",
+      "mqtt": "Appointment/cancel/requested"
+    }
+  ]
+}
