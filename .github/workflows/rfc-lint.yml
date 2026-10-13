@@ -6,6 +6,8 @@ on:
       - "rfcs/**"
       - "RFC-TEMPLATE.md"
       - ".github/scripts/lint_rfc.py"
+      - ".github/scripts/test_conformance.py"
+      - "vectors/**"
       - ".github/workflows/rfc-lint.yml"
   push:
     branches: [main]
@@ -34,3 +36,5 @@ jobs:
         run: echo "RFC_LINT_BASE=${{ github.event.before }}" >> "$GITHUB_ENV"
       - name: Lint changed RFCs
         run: python3 .github/scripts/lint_rfc.py
+      - name: Run conformance vector tests
+        run: python3 .github/scripts/test_conformance.py
