@@ -26,8 +26,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Set base reference
+      - name: Set base reference for pull requests
         if: github.event_name == 'pull_request'
         run: echo "RFC_LINT_BASE=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_ENV"
+      - name: Set base reference for pushes
+        if: github.event_name == 'push'
+        run: echo "RFC_LINT_BASE=${{ github.event.before }}" >> "$GITHUB_ENV"
       - name: Lint changed RFCs
         run: python3 .github/scripts/lint_rfc.py
