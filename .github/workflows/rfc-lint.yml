@@ -15,6 +15,9 @@ on:
       - "rfcs/**"
       - "RFC-TEMPLATE.md"
       - ".github/scripts/lint_rfc.py"
+      - ".github/scripts/test_conformance.py"
+      - ".github/scripts/test_uesp_e3.py"
+      - "vectors/**"
       - ".github/workflows/rfc-lint.yml"
 
 permissions:
