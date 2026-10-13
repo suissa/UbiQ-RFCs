@@ -32,7 +32,7 @@ def valid_semantic_address(value: str) -> bool:
     entity, action, state = parts
     if not re.fullmatch(r"[A-Z][A-Za-z0-9]*", entity):
         return False
-    if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", action):
+    if not re.fullmatch(r"[a-z0-9-]+", action):
         return False
     allowed_states = {
         "requested", "accepted", "completed", "failed",
@@ -40,7 +40,7 @@ def valid_semantic_address(value: str) -> bool:
     }
     return state in allowed_states or (
         state.startswith("x-")
-        and re.fullmatch(r"x-[a-z0-9]+(?:-[a-z0-9]+)*", state) is not None
+        and re.fullmatch(r"x-[a-z0-9-]+", state) is not None
     )
 
 
