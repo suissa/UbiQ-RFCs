@@ -1,0 +1,36 @@
+{
+  "id": "UESP-CRASH-03",
+  "rfc": "RFC-045",
+  "profile": "Durable",
+  "version": "draft-v1",
+  "purpose": "Reference-oracle vector; tests the specified recovery invariant, not a production runtime implementation.",
+  "effect_class": "E1",
+  "provider": {
+    "idempotency_enforced": true,
+    "deduplication_scope": "execution_id+node_id+attempt_id",
+    "expected_effect_count": 1
+  },
+  "fault": {
+    "boundary": "after_effect_before_settlement",
+    "recovery": "reconcile_before_any_retry"
+  },
+  "expected": {
+    "final_state": "settled-success",
+    "provider_effect_count": 1,
+    "settlement_count": 1,
+    "transport_ack_after_settlement": true
+  },
+  "forbidden": [
+    "blind_retry",
+    "acknowledge_before_settlement"
+  ],
+  "required_fault_boundaries": [
+    "pre-intent",
+    "post-intent",
+    "post-dispatch",
+    "post-effect",
+    "post-settlement",
+    "pre-ack",
+    "post-ack"
+  ]
+}
