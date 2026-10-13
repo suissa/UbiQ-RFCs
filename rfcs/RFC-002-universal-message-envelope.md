@@ -4,7 +4,7 @@
 - Category: Standards Track
 - Scope: semantic, trust, transport
 - Created: 2026-10-13
-- Requires: RFC-001, RFC-003, RFC-019, RFC-020, RFC-022, RFC-046, RFC-047
+- Requires: RFC-001, RFC-003, RFC-019, RFC-020, RFC-022, RFC-047
 - Updates: —
 - Obsoletes: —
 - Threats addressed: A1, A2, A3, A5
