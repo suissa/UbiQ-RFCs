@@ -4,7 +4,7 @@
 - Category: Process
 - Scope: semantic, execution, trust, transport
 - Created: 2026-10-13
-- Requires: RFC-049
+- Requires: —
 - Updates: —
 - Obsoletes: —
 - Threats addressed: A3, A5
