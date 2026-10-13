@@ -1,0 +1,33 @@
+name: RFC lint
+
+on:
+  pull_request:
+    paths:
+      - "rfcs/**"
+      - "RFC-TEMPLATE.md"
+      - ".github/scripts/lint_rfc.py"
+      - ".github/workflows/rfc-lint.yml"
+  push:
+    branches: [main]
+    paths:
+      - "rfcs/**"
+      - "RFC-TEMPLATE.md"
+      - ".github/scripts/lint_rfc.py"
+      - ".github/workflows/rfc-lint.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set base reference
+        if: github.event_name == 'pull_request'
+        run: echo "RFC_LINT_BASE=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_ENV"
+      - name: Lint changed RFCs
+        run: python3 .github/scripts/lint_rfc.py
