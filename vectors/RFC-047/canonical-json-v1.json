@@ -56,5 +56,16 @@
       "nats": "Appointment.cancel.requested",
       "mqtt": "Appointment/cancel/requested"
     }
+  ],
+  "cbor_cases": [
+    {
+      "name": "small-map-string-keys-nonnegative-integers",
+      "input": {
+        "b": 2,
+        "a": 1
+      },
+      "deterministic_cbor_hex": "a2616101616202",
+      "sha256": "a0d3af9e86e5517f729bad0657e2c6f3b7d03899894c8d6b33759074c893b5e3"
+    }
   ]
 }
