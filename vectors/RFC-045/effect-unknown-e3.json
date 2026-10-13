@@ -1,0 +1,26 @@
+{
+  "id": "UESP-E3-UNKNOWN-001",
+  "rfc": "RFC-045",
+  "profile": "Durable",
+  "version": "draft-v1",
+  "purpose": "Reference-oracle vector asserting that an irreversible, non-reconcilable effect is quarantined rather than automatically retried.",
+  "effect_class": "E3",
+  "provider": {
+    "idempotency_enforced": false,
+    "reconciliation_available": false,
+    "expected_effect_count": 1
+  },
+  "fault": {
+    "boundary": "after_dispatch_outcome_unknown",
+    "recovery": "quarantine_without_automatic_retry"
+  },
+  "expected": {
+    "final_state": "quarantined",
+    "provider_effect_count": 1,
+    "automatic_retry_count": 0
+  },
+  "forbidden": [
+    "blind_retry",
+    "claim_effectively_once"
+  ]
+}
