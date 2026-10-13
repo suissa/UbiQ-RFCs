@@ -79,6 +79,16 @@ The key words MUST, MUST NOT, REQUIRED, SHOULD, SHOULD NOT, and MAY are interpre
 | 047 | Canonical Serialization and Wire Identifiers |
 | 048 | 2flow Contract Binding |
 | 049 | UbiQ Terminology and Normative Ownership |
+| 050 | Delivery and Effect Profiles |
+| 051 | Authorization Enforcement and Delegation |
+| 052 | Federation Identity and Multipath Coordination |
+| 053 | Proof Profiles and Resource Budgets |
+| 054 | Deterministic and Privacy-Aware Semantic Routing |
+| 055 | Request/Response and Streaming Safety |
+| 056 | Adapter ABI and Supply-Chain Verification |
+| 057 | Secure Configuration, Privacy, and Retention |
+| 058 | Typed Capability Registry |
+| 059 | Formal Transport Invariance and Equivalence Oracle |
 
 ## Conformance and maturity
 
