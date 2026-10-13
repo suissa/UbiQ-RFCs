@@ -23,6 +23,37 @@ def read_vector(path: pathlib.Path) -> dict:
         return json.load(handle)
 
 
+
+
+def _cbor_head(major: int, value: int) -> bytes:
+    if value < 24:
+        return bytes([(major << 5) | value])
+    if value <= 0xFF:
+        return bytes([(major << 5) | 24, value])
+    if value <= 0xFFFF:
+        return bytes([(major << 5) | 25]) + value.to_bytes(2, "big")
+    raise ValueError("reference encoder fixture supports values up to 65535")
+
+
+def encode_small_canonical_cbor(value: dict) -> bytes:
+    """Encode the fixture subset: string keys and non-negative integer values."""
+    if not isinstance(value, dict) or not all(
+        isinstance(k, str) and isinstance(v, int) and not isinstance(v, bool) and v >= 0
+        for k, v in value.items()
+    ):
+        raise ValueError("fixture encoder supports only string-keyed maps of non-negative integers")
+    encoded_keys = {
+        key: _cbor_head(3, len(key.encode("utf-8"))) + key.encode("utf-8")
+        for key in value
+    }
+    ordered_keys = sorted(value, key=lambda key: (len(encoded_keys[key]), encoded_keys[key]))
+    output = bytearray(_cbor_head(5, len(value)))
+    for key in ordered_keys:
+        output.extend(encoded_keys[key])
+        output.extend(_cbor_head(0, value[key]))
+    return bytes(output)
+
+
 def valid_semantic_address(value: str) -> bool:
     if not value.isascii() or len(value.encode("ascii")) > 192:
         return False
@@ -101,6 +132,13 @@ class TestSerializationVectors(unittest.TestCase):
             self.assertEqual(canonical, case["canonical_utf8"])
             digest = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
             self.assertEqual(digest, case["sha256"])
+
+    def test_deterministic_cbor_bytes_and_digest(self) -> None:
+        for case in self.vector.get("cbor_cases", []):
+            with self.subTest(name=case["name"]):
+                encoded = encode_small_canonical_cbor(case["input"])
+                self.assertEqual(encoded.hex(), case["deterministic_cbor_hex"])
+                self.assertEqual(hashlib.sha256(encoded).hexdigest(), case["sha256"])
 
     def test_semantic_address_grammar(self) -> None:
         for case in self.vector["semantic_addresses"]:
