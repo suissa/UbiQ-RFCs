@@ -171,8 +171,8 @@ class Runtime:
             """, (execution_id, node_id, attempt_id)).fetchone()
             if intent is None:
                 raise ValueError("settlement has no durable intent")
-            if intent["fencing_epoch"] != epoch:
-                raise StaleFencingEpoch("intent belongs to a different fencing epoch")
+            if intent["fencing_epoch"] > epoch:
+                raise StaleFencingEpoch("intent carries a fencing epoch newer than the settlement owner")
             result_json = json.dumps(result, sort_keys=True, separators=(",", ":"))
             message = {
                 "type": "ExecutionSettled",
@@ -228,11 +228,14 @@ class Runtime:
                 LEFT JOIN settlements s USING(execution_id,node_id,attempt_id)
                 WHERE s.attempt_id IS NULL
             """).fetchall()
+        current_epochs: dict[str, int] = {}
         for intent in rows:
             execution_id = intent["execution_id"]
             node_id = intent["node_id"]
             attempt_id = intent["attempt_id"]
-            epoch = intent["fencing_epoch"]
+            if execution_id not in current_epochs:
+                current_epochs[execution_id] = self.acquire_owner(execution_id)
+            epoch = current_epochs[execution_id]
             if intent["effect_class"] == "E3":
                 with _connect(self.db_path) as db:
                     db.execute("""
