@@ -1,6 +1,7 @@
 import os
 import subprocess
 import sys
+import sqlite3
 import tempfile
 import unittest
 from pathlib import Path
@@ -70,6 +71,32 @@ class RuntimeIntegrationTests(unittest.TestCase):
         self.assertEqual(self.runtime.state(self.execution, self.node, self.attempt), "QUARANTINED")
         self.assertEqual(self.provider.effect_count(self.key), 1)
         self.assertEqual(self.runtime.settlement_count(), 0)
+
+    def test_outbox_failure_rolls_back_settlement_atomically(self):
+        self.runtime._persist_intent(
+            self.execution, self.node, self.attempt, self.key,
+            self.payload, "E1", self.epoch,
+        )
+        with sqlite3.connect(self.runtime_db) as db:
+            db.execute("""
+                CREATE TRIGGER fail_outbox_insert
+                BEFORE INSERT ON outbox
+                BEGIN
+                    SELECT RAISE(ABORT, 'injected outbox failure');
+                END
+            """)
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.runtime._settle(
+                self.execution, self.node, self.attempt,
+                {"provider_reference": "effect-test", "applied": True},
+                self.epoch,
+            )
+        self.assertEqual(self.runtime.settlement_count(), 0)
+        self.assertEqual(self.runtime.outbox_count(), 0)
+        self.assertEqual(
+            self.runtime.state(self.execution, self.node, self.attempt),
+            "INTENT_PERSISTED",
+        )
 
     def test_provider_rejects_reused_key_with_different_payload(self):
         self.provider.apply(self.key, self.payload)
