@@ -1,3 +1,6 @@
+import os
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -36,6 +39,27 @@ class RuntimeIntegrationTests(unittest.TestCase):
         self.assertEqual(self.runtime.settlement_count(), 1)
         self.assertEqual(self.runtime.outbox_count(), 1)
         self.assertTrue(self.runtime.ack_is_permitted(self.execution, self.node, self.attempt))
+
+    def test_abrupt_process_exit_recovers_from_durable_state(self):
+        worker = Path(__file__).with_name("crash_worker.py")
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(Path(__file__).resolve().parents[1])
+        process = subprocess.run(
+            [sys.executable, str(worker), str(self.runtime_db), str(self.provider_db)],
+            cwd=Path(__file__).resolve().parents[1],
+            env=env,
+            check=False,
+        )
+        self.assertEqual(process.returncode, 73)
+        key = "tenant.example:process-crash-001:write-order"
+        self.assertEqual(self.provider.effect_count(key), 1)
+
+        recovered_runtime = Runtime(self.runtime_db, self.provider)
+        result = recovered_runtime.recover()
+        self.assertEqual(result, {"recovered": 1, "quarantined": 0})
+        self.assertEqual(self.provider.effect_count(key), 1)
+        self.assertEqual(recovered_runtime.settlement_count(), 1)
+        self.assertEqual(recovered_runtime.outbox_count(), 1)
 
     def test_e3_unknown_outcome_is_quarantined_without_retry(self):
         with self.assertRaises(SimulatedCrash):
