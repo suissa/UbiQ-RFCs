@@ -226,7 +226,7 @@ class Runtime:
             rows = db.execute("""
                 SELECT i.* FROM intents i
                 LEFT JOIN settlements s USING(execution_id,node_id,attempt_id)
-                WHERE s.attempt_id IS NULL
+                WHERE s.attempt_id IS NULL AND i.state != 'QUARANTINED'
             """).fetchall()
         current_epochs: dict[str, int] = {}
         for intent in rows:
