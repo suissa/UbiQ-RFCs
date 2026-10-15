@@ -1,0 +1,56 @@
+name: RFC lint
+
+on:
+  pull_request:
+    paths:
+      - "rfcs/**"
+      - "RFC-TEMPLATE.md"
+      - ".github/scripts/lint_rfc.py"
+      - ".github/scripts/test_conformance.py"
+      - ".github/scripts/test_uesp_e3.py"
+      - ".github/scripts/test_transport_invariance.py"
+      - "conformance/**"
+      - "tests/**"
+      - "vectors/**"
+      - ".github/workflows/rfc-lint.yml"
+  push:
+    branches: [main]
+    paths:
+      - "rfcs/**"
+      - "RFC-TEMPLATE.md"
+      - ".github/scripts/lint_rfc.py"
+      - ".github/scripts/test_conformance.py"
+      - ".github/scripts/test_uesp_e3.py"
+      - ".github/scripts/test_transport_invariance.py"
+      - "conformance/**"
+      - "tests/**"
+      - "vectors/**"
+      - ".github/workflows/rfc-lint.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set base reference for pull requests
+        if: github.event_name == 'pull_request'
+        run: echo "RFC_LINT_BASE=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_ENV"
+      - name: Set base reference for pushes
+        if: github.event_name == 'push'
+        run: echo "RFC_LINT_BASE=${{ github.event.before }}" >> "$GITHUB_ENV"
+      - name: Lint changed RFCs
+        run: python3 .github/scripts/lint_rfc.py
+      - name: Run conformance vector tests
+        run: python3 .github/scripts/test_conformance.py
+      - name: Run UESP E3 recovery vector test
+        run: python3 .github/scripts/test_uesp_e3.py
+      - name: Run transport invariance reference test
+        run: python3 .github/scripts/test_transport_invariance.py
+      - name: Run runtime integration tests
+        run: python3 -m unittest discover -s tests -v

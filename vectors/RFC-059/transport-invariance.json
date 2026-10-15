@@ -1,0 +1,43 @@
+{
+  "id": "TRANSPORT-INVARIANCE-001",
+  "rfc": "RFC-059",
+  "profile": "Core",
+  "version": "draft-v1",
+  "purpose": "Reference mapping vector: all bindings carry the same semantic identity and canonical message fields.",
+  "canonical": {
+    "semantic_address": "Patient.create.requested",
+    "message_id": "0190f7b8-7c00-7000-8000-000000000001",
+    "execution_id": "issuer.example/0190f7b8-7c00-7000-8000-000000000002",
+    "canonical_digest": "sha256:example-digest-value"
+  },
+  "bindings": [
+    {
+      "name": "NATS",
+      "subject": "Patient.create.requested"
+    },
+    {
+      "name": "MQTT",
+      "topic": "Patient/create/requested"
+    },
+    {
+      "name": "HTTP",
+      "method": "POST",
+      "path": "/v1/events/Patient.create.requested"
+    },
+    {
+      "name": "Kafka",
+      "topic": "ubiq-events",
+      "headers": {
+        "ubiq-name": "Patient.create.requested"
+      }
+    }
+  ],
+  "expected": {
+    "normalized_semantic_address": "Patient.create.requested",
+    "message_id": "0190f7b8-7c00-7000-8000-000000000001",
+    "execution_id": "issuer.example/0190f7b8-7c00-7000-8000-000000000002",
+    "canonical_digest": "sha256:example-digest-value",
+    "distinct_semantic_identities": 1
+  },
+  "note": "The digest is a symbolic fixture value, not a cryptographic test vector. Adapter implementations must replace it with the digest of canonical bytes."
+}
